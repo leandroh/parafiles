@@ -85,6 +85,16 @@ else
   echo "  [ok] Neovim"
 fi
 
+# tmux
+if ! command -v tmux &>/dev/null; then
+  echo "  [install] tmux..."
+  if [ "$DRY_RUN" = false ]; then
+    brew install tmux
+  fi
+else
+  echo "  [ok] tmux"
+fi
+
 # Optional tools (just warn)
 MISSING_OPTIONAL=()
 command -v kubectl &>/dev/null || MISSING_OPTIONAL+=("kubectl")
