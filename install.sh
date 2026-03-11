@@ -178,6 +178,7 @@ if [ -d "/Applications/iTerm.app" ]; then
   if [ "$DRY_RUN" = false ]; then
     defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$PARAFILES_DIR/iterm2"
     defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+    defaults write com.googlecode.iterm2 TabStyleWithAutomaticOption -int 1
   fi
   echo "  [done] iTerm2 will load prefs from $PARAFILES_DIR/iterm2"
 else
