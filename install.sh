@@ -20,6 +20,105 @@ if [ "$DRY_RUN" = false ]; then
   mkdir -p "$BACKUP_DIR"
 fi
 
+# ── Dependencies ──────────────────────────────────────────────
+
+echo "Checking dependencies..."
+
+# Homebrew
+if ! command -v brew &>/dev/null; then
+  echo "  [install] Homebrew not found, installing..."
+  if [ "$DRY_RUN" = false ]; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+else
+  echo "  [ok] Homebrew"
+fi
+
+# Oh My Zsh
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  echo "  [install] Oh My Zsh not found, installing..."
+  if [ "$DRY_RUN" = false ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  fi
+else
+  echo "  [ok] Oh My Zsh"
+fi
+
+# Oh My Zsh plugins
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+  echo "  [install] zsh-autosuggestions..."
+  if [ "$DRY_RUN" = false ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+  fi
+else
+  echo "  [ok] zsh-autosuggestions"
+fi
+
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+  echo "  [install] zsh-syntax-highlighting..."
+  if [ "$DRY_RUN" = false ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+  fi
+else
+  echo "  [ok] zsh-syntax-highlighting"
+fi
+
+# asdf
+if ! command -v asdf &>/dev/null && [ ! -f /opt/homebrew/opt/asdf/libexec/asdf.sh ]; then
+  echo "  [install] asdf via Homebrew..."
+  if [ "$DRY_RUN" = false ]; then
+    brew install asdf
+  fi
+else
+  echo "  [ok] asdf"
+fi
+
+# Neovim
+if ! command -v nvim &>/dev/null; then
+  echo "  [install] Neovim..."
+  if [ "$DRY_RUN" = false ]; then
+    brew install neovim
+  fi
+else
+  echo "  [ok] Neovim"
+fi
+
+# tmux
+if ! command -v tmux &>/dev/null; then
+  echo "  [install] tmux..."
+  if [ "$DRY_RUN" = false ]; then
+    brew install tmux
+  fi
+else
+  echo "  [ok] tmux"
+fi
+
+# Optional tools (just warn)
+MISSING_OPTIONAL=()
+command -v kubectl &>/dev/null || MISSING_OPTIONAL+=("kubectl")
+command -v tofu &>/dev/null || MISSING_OPTIONAL+=("opentofu")
+command -v pnpm &>/dev/null || MISSING_OPTIONAL+=("pnpm")
+
+# JetBrains Mono Nerd Font
+if ! ls ~/Library/Fonts/JetBrainsMonoNerdFont* &>/dev/null && ! ls /Library/Fonts/JetBrainsMonoNerdFont* &>/dev/null; then
+  echo "  [install] JetBrains Mono Nerd Font..."
+  if [ "$DRY_RUN" = false ]; then
+    brew install --cask font-jetbrains-mono-nerd-font
+  fi
+else
+  echo "  [ok] JetBrains Mono Nerd Font"
+fi
+
+if [ ${#MISSING_OPTIONAL[@]} -gt 0 ]; then
+  echo ""
+  echo "  Optional tools not found (install when needed):"
+  echo "    brew install ${MISSING_OPTIONAL[*]}"
+fi
+
+echo ""
+
 link_file() {
   local src="$1"
   local dest="$2"
@@ -108,6 +207,7 @@ if [ -d "/Applications/iTerm.app" ]; then
   if [ "$DRY_RUN" = false ]; then
     defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$PARAFILES_DIR/iterm2"
     defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+    defaults write com.googlecode.iterm2 TabStyleWithAutomaticOption -int 1
   fi
   echo "  [done] iTerm2 will load prefs from $PARAFILES_DIR/iterm2"
 else
