@@ -33,7 +33,7 @@ export PATH="$PNPM_HOME:$PATH"
 
 # Erlang/Elixir
 if command -v brew &>/dev/null; then
-  export KERL_CONFIGURE_OPTIONS="--without-wx --without-javac --with-ssl=$(brew --prefix openssl@1.1)"
+  export KERL_CONFIGURE_OPTIONS="--without-wx --without-javac --with-ssl=$(brew --prefix openssl@3)"
 fi
 export ERL_AFLAGS="-kernel shell_history enabled"
 
