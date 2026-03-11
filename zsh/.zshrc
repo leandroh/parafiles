@@ -16,7 +16,7 @@ plugins=(
   zsh-syntax-highlighting
 )
 
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
 # Secrets (API keys, tokens, etc.)
 [ -f ~/.secrets ] && source ~/.secrets
@@ -48,14 +48,9 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="/opt/nvim-macos/bin:$PATH"
 export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"
 
-# NVM
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
 # Editor
-VISUAL="code --wait"
-EDITOR="code --wait"
+export VISUAL="code --wait"
+export EDITOR="code --wait"
 
 # Aliases
 source ~/.aliases

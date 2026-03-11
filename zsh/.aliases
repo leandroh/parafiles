@@ -1,3 +1,4 @@
+alias x='exit'
 alias vim='nvim'
 alias tf='terraform'
 alias k='kubectl'

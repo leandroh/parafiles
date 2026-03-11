@@ -3,14 +3,22 @@ set -euo pipefail
 
 PARAFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 BACKUP_DIR="$HOME/.dotfiles_backup/$(date +%Y%m%d_%H%M%S)"
+DRY_RUN=false
+
+if [[ "${1:-}" == "--dry-run" ]]; then
+  DRY_RUN=true
+  echo "[DRY RUN] No changes will be made."
+  echo ""
+fi
 
 echo "Parafiles installer"
 echo "==================="
 echo "Source: $PARAFILES_DIR"
 echo ""
 
-# Create backup directory
-mkdir -p "$BACKUP_DIR"
+if [ "$DRY_RUN" = false ]; then
+  mkdir -p "$BACKUP_DIR"
+fi
 
 link_file() {
   local src="$1"
@@ -24,13 +32,24 @@ link_file() {
       return
     fi
     echo "  [backup] $dest (symlink to $current_target)"
-    mv "$dest" "$BACKUP_DIR/$(basename "$dest")"
+    if [ "$DRY_RUN" = false ]; then
+      mv "$dest" "$BACKUP_DIR/$(basename "$dest")"
+    fi
+  elif [ -d "$dest" ]; then
+    echo "  [backup] $dest (directory)"
+    if [ "$DRY_RUN" = false ]; then
+      mv "$dest" "$BACKUP_DIR/$(basename "$dest")"
+    fi
   elif [ -f "$dest" ]; then
     echo "  [backup] $dest"
-    mv "$dest" "$BACKUP_DIR/$(basename "$dest")"
+    if [ "$DRY_RUN" = false ]; then
+      mv "$dest" "$BACKUP_DIR/$(basename "$dest")"
+    fi
   fi
 
-  ln -s "$src" "$dest"
+  if [ "$DRY_RUN" = false ]; then
+    ln -s "$src" "$dest"
+  fi
   echo "  [link] $dest -> $src"
 }
 
@@ -46,7 +65,9 @@ link_file "$PARAFILES_DIR/git/.gitconfig" "$HOME/.gitconfig"
 link_file "$PARAFILES_DIR/git/.gitignore_global" "$HOME/.gitignore_global"
 
 # Nvim
-mkdir -p "$HOME/.config"
+if [ "$DRY_RUN" = false ]; then
+  mkdir -p "$HOME/.config"
+fi
 link_file "$PARAFILES_DIR/nvim" "$HOME/.config/nvim"
 
 echo ""
@@ -54,8 +75,10 @@ echo ""
 # Secrets
 if [ ! -f "$HOME/.secrets" ]; then
   echo "Creating ~/.secrets from template..."
-  cp "$PARAFILES_DIR/secrets.example" "$HOME/.secrets"
-  chmod 600 "$HOME/.secrets"
+  if [ "$DRY_RUN" = false ]; then
+    cp "$PARAFILES_DIR/secrets.example" "$HOME/.secrets"
+    chmod 600 "$HOME/.secrets"
+  fi
   echo "  [created] ~/.secrets - EDIT THIS FILE with your actual secrets"
 else
   echo "  [skip] ~/.secrets already exists"
@@ -65,9 +88,13 @@ echo ""
 
 # SSH config
 if [ ! -f "$HOME/.ssh/config" ]; then
-  mkdir -p "$HOME/.ssh"
-  cp "$PARAFILES_DIR/ssh/config.template" "$HOME/.ssh/config"
-  chmod 600 "$HOME/.ssh/config"
+  echo "Creating ~/.ssh/config from template..."
+  if [ "$DRY_RUN" = false ]; then
+    mkdir -p "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
+    cp "$PARAFILES_DIR/ssh/config.template" "$HOME/.ssh/config"
+    chmod 600 "$HOME/.ssh/config"
+  fi
   echo "  [created] ~/.ssh/config from template"
 else
   echo "  [skip] ~/.ssh/config already exists"
@@ -78,8 +105,10 @@ echo ""
 # iTerm2 preferences
 if [ -d "/Applications/iTerm.app" ]; then
   echo "Configuring iTerm2 to load preferences from parafiles..."
-  defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$PARAFILES_DIR/iterm2"
-  defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+  if [ "$DRY_RUN" = false ]; then
+    defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$PARAFILES_DIR/iterm2"
+    defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+  fi
   echo "  [done] iTerm2 will load prefs from $PARAFILES_DIR/iterm2"
 else
   echo "  [skip] iTerm2 not installed"
@@ -88,10 +117,12 @@ fi
 echo ""
 
 # Check backup dir
-if [ -z "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]; then
-  rmdir "$BACKUP_DIR"
-else
-  echo "Backups saved to: $BACKUP_DIR"
+if [ "$DRY_RUN" = false ]; then
+  if [ -z "$(ls -A "$BACKUP_DIR" 2>/dev/null)" ]; then
+    rmdir "$BACKUP_DIR"
+  else
+    echo "Backups saved to: $BACKUP_DIR"
+  fi
 fi
 
 echo ""
