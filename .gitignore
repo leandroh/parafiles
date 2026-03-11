@@ -1,0 +1,3 @@
+.secrets
+*.backup
+.DS_Store
