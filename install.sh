@@ -82,6 +82,16 @@ command -v tofu &>/dev/null || MISSING_OPTIONAL+=("opentofu")
 command -v nvim &>/dev/null || MISSING_OPTIONAL+=("neovim")
 command -v pnpm &>/dev/null || MISSING_OPTIONAL+=("pnpm")
 
+# JetBrains Mono Nerd Font
+if ! ls ~/Library/Fonts/JetBrainsMonoNerdFont* &>/dev/null && ! ls /Library/Fonts/JetBrainsMonoNerdFont* &>/dev/null; then
+  echo "  [install] JetBrains Mono Nerd Font..."
+  if [ "$DRY_RUN" = false ]; then
+    brew install --cask font-jetbrains-mono-nerd-font
+  fi
+else
+  echo "  [ok] JetBrains Mono Nerd Font"
+fi
+
 if [ ${#MISSING_OPTIONAL[@]} -gt 0 ]; then
   echo ""
   echo "  Optional tools not found (install when needed):"
