@@ -1,0 +1,9 @@
+alias vim='nvim'
+alias tf='terraform'
+alias k='kubectl'
+
+# Elixir
+alias ies="iex -S mix"
+alias mtest="mix test"
+alias iphx="iex -S mix phx.server"
+alias mphx="mix phx.server"

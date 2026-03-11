@@ -1,0 +1,11 @@
+# This is Git's per-user configuration file.
+[user]
+	name = Leandro Parazito
+	email = 11623+leandroh@users.noreply.github.com
+[init]
+	defaultBranch = main
+[alias]
+	st = status
+[core]
+	pager = cat
+	excludesfile = ~/.gitignore_global
