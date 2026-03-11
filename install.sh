@@ -75,11 +75,20 @@ else
   echo "  [ok] asdf"
 fi
 
+# Neovim
+if ! command -v nvim &>/dev/null; then
+  echo "  [install] Neovim..."
+  if [ "$DRY_RUN" = false ]; then
+    brew install neovim
+  fi
+else
+  echo "  [ok] Neovim"
+fi
+
 # Optional tools (just warn)
 MISSING_OPTIONAL=()
 command -v kubectl &>/dev/null || MISSING_OPTIONAL+=("kubectl")
 command -v tofu &>/dev/null || MISSING_OPTIONAL+=("opentofu")
-command -v nvim &>/dev/null || MISSING_OPTIONAL+=("neovim")
 command -v pnpm &>/dev/null || MISSING_OPTIONAL+=("pnpm")
 
 # JetBrains Mono Nerd Font
