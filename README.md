@@ -1,11 +1,17 @@
 # parafiles
-My personal dotfiles and configs — everything Pará needs to feel at home in the terminal. 🧉
+
+My personal dotfiles and configs.
 
 ## Quick Start
 
 ```bash
 git clone https://github.com/leandroh/parafiles.git ~/Developer/parafiles
 cd ~/Developer/parafiles
+
+# Preview what will happen
+./install.sh --dry-run
+
+# Run for real
 ./install.sh
 ```
 
@@ -17,7 +23,7 @@ Edit `~/.secrets` with your actual API keys and tokens.
 |-----------|----------|
 | `zsh/` | `.zshrc`, `.zprofile`, `.aliases` |
 | `git/` | `.gitconfig`, `.gitignore_global` |
-| `nvim/` | Neovim configuration |
+| `nvim/` | Neovim config |
 | `iterm2/` | iTerm2 preferences |
 | `ssh/` | SSH config template |
 
@@ -25,19 +31,29 @@ Edit `~/.secrets` with your actual API keys and tokens.
 
 Secrets (API keys, tokens, credentials) are kept in `~/.secrets` which is **never committed**.
 
-- `secrets.example` shows all required environment variables
-- Copy it to `~/.secrets` and fill in your values
-- `.zshrc` sources `~/.secrets` automatically
+`secrets.example` shows the expected variables. Copy it to `~/.secrets`, fill in your values, and `.zshrc` sources it automatically.
 
 ## How It Works
 
 `install.sh` creates symlinks from your home directory to this repo:
 
-- `~/.zshrc` -> `parafiles/zsh/.zshrc`
-- `~/.zprofile` -> `parafiles/zsh/.zprofile`
-- `~/.aliases` -> `parafiles/zsh/.aliases`
-- `~/.gitconfig` -> `parafiles/git/.gitconfig`
-- `~/.gitignore_global` -> `parafiles/git/.gitignore_global`
-- `~/.config/nvim` -> `parafiles/nvim`
+```
+~/.zshrc          → zsh/.zshrc
+~/.zprofile       → zsh/.zprofile
+~/.aliases        → zsh/.aliases
+~/.gitconfig      → git/.gitconfig
+~/.gitignore_global → git/.gitignore_global
+~/.config/nvim    → nvim/
+```
 
 Existing files are backed up to `~/.dotfiles_backup/` before linking.
+
+## Tools
+
+| Tool | Manager |
+|------|---------|
+| Node, Ruby, Erlang, Elixir | asdf |
+| Packages | pnpm, Homebrew |
+| Editor | VS Code, Neovim |
+| Terminal | iTerm2 |
+| Infra | Terraform/OpenTofu, kubectl |
